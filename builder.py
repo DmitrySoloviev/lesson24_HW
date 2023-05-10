@@ -1,5 +1,5 @@
-from typing import Callable, Dict
-from functions import filter_query, unique_query, limit_query, map_query, sort_query
+from typing import Callable, Dict, Optional, Iterable, List
+from functions import filter_query, unique_query, limit_query, map_query, sort_query, regex_query
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -11,18 +11,19 @@ CMS_TO_FUNCTIONS: Dict[str, Callable] = {
     'limit': limit_query,
     'map': map_query,
     'sort': sort_query,
+    'regex': regex_query,
 }
 
 
-def read_file(file_name: str):
+def read_file(file_name: str) -> Iterable[str]:
     with open(file_name) as file:
         for line in file:
             yield line
 
 
-def build_query(cmd, value, file_name, data):
+def build_query(cmd: str, value: str, file_name: str, data: Optional[Iterable[str]]) -> List[str]:
     if data is None:
-        prepared_data = read_file(DATA_DIR + os.sep + file_name)
+        prepared_data: Iterable[str] = read_file(DATA_DIR + os.sep + file_name)
     else:
         prepared_data = data
 
